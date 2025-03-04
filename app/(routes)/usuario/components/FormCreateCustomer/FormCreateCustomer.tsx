@@ -1,9 +1,8 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,21 +51,18 @@ export function FormCreateCustomer({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await fetch("/api/usuario", {
-        method: "POST",
+      const response = await axios.post("/api/usuario", values, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
       });
 
-      if (response.ok) {
+      if (response.status === 201) {
         console.log("Usuario creado correctamente");
         setOpenModalCreate(false); // Cierra el modal después de enviar
         form.reset(); // Resetea el formulario
       } else {
-        const data = await response.json();
-        setError(data.message || "Error al crear el usuario");
+        setError(response.data.message || "Error al crear el usuario");
       }
     } catch (error) {
       setError("Error en la solicitud");

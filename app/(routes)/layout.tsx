@@ -2,11 +2,11 @@ import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
 import React from "react";
 
-export default function layoutDashboard({
-  children,
-}: {
-  children: React.ReactElement;
-}) {
+interface LayoutDashboardProps {
+  children: React.ReactNode;
+}
+
+const LayoutDashboard: React.FC<LayoutDashboardProps> = ({ children }) => {
   return (
     <div className="flex w-full h-full">
       <div className="hidden xl:block w-80 h-full xl:fixed">
@@ -18,4 +18,6 @@ export default function layoutDashboard({
       </div>
     </div>
   );
-}
+};
+
+export default LayoutDashboard;
