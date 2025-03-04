@@ -1,0 +1,63 @@
+"use client";
+
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+
+import { SidebarItem } from "../SidebarItem";
+
+import {
+  dataGeneralSidebar,
+  dataSupportSidebar,
+  dataToolsSidebar,
+} from "./SidebarRoutes.data";
+
+export function SidebarRoutes() {
+  return (
+    <div className="flex flex-col justify-between h-full">
+      <div>
+        <div className="p-2 md:p-6">
+          <p className="text-slate-500 mb-2">GENERAL</p>
+          {dataGeneralSidebar.map((item) => (
+            <SidebarItem key={item.label} item={item} />
+          ))}
+        </div>
+
+        <Separator />
+
+        <div className="p-2 md:p-6">
+          <p className="text-slate-500 mb-2">HERRAMIENTAS</p>
+          {dataToolsSidebar.map((item) => (
+            <SidebarItem key={item.label} item={item} />
+          ))}
+        </div>
+
+        <Separator />
+
+        <div className="p-2 md:p-6">
+          <p className="text-slate-500 mb-2">SOPORTE</p>
+          {dataSupportSidebar.map((item) => (
+            <SidebarItem key={item.label} item={item} />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="text-center p-8">
+          <a
+            href="https://www.casaluker.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button variant="outline" className="w-full">
+              Casa Luker
+            </Button>
+          </a>
+        </div>
+
+        <Separator />
+
+        <footer className="mt-3 p-3 text-center">2025</footer>
+      </div>
+    </div>
+  );
+}
