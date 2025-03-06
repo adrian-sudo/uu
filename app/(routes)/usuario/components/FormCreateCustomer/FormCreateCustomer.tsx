@@ -51,11 +51,15 @@ export function FormCreateCustomer({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await axios.post("/api/usuario", values, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:3001/api/usuarios",
+        values,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 201) {
         console.log("Usuario creado correctamente");
@@ -65,7 +69,11 @@ export function FormCreateCustomer({
         setError(response.data.message || "Error al crear el usuario");
       }
     } catch (error) {
-      setError("Error en la solicitud");
+      if (axios.isAxiosError(error) && error.response) {
+        setError(error.response.data.message || "Error en la solicitud");
+      } else {
+        setError("Error en la solicitud");
+      }
     }
   };
 

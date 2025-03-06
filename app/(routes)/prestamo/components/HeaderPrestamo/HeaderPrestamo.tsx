@@ -29,7 +29,7 @@ export function HeaderPrestamo() {
             <DialogDescription>Crear y Configurar prestamos</DialogDescription>
           </DialogHeader>
 
-          <FormCreateCustomer setOpenModalCreate={setOpenModalCreate} />
+          <FormCreateCustomer />
         </DialogContent>
       </Dialog>
     </div>

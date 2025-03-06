@@ -29,7 +29,7 @@ export function HeaderInventory() {
             <DialogDescription>Crear y configurar Inventario</DialogDescription>
           </DialogHeader>
 
-          <FormCreateCustomer setOpenModalCreate={setOpenModalCreate} />
+          <FormCreateCustomer />
         </DialogContent>
       </Dialog>
     </div>

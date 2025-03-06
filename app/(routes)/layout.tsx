@@ -2,11 +2,11 @@ import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
 import React from "react";
 
-interface LayoutDashboardProps {
-  children: React.ReactNode;
-}
-
-const LayoutDashboard: React.FC<LayoutDashboardProps> = ({ children }) => {
+export default function layoutDashboard({
+  children,
+}: {
+  children: React.ReactElement;
+}) {
   return (
     <div className="flex w-full h-full">
       <div className="hidden xl:block w-80 h-full xl:fixed">
@@ -18,6 +18,4 @@ const LayoutDashboard: React.FC<LayoutDashboardProps> = ({ children }) => {
       </div>
     </div>
   );
-};
-
-export default LayoutDashboard;
+}
