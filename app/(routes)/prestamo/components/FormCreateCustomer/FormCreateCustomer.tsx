@@ -16,15 +16,57 @@ import { Input } from "@/components/ui/input";
 import { FormCreateCustomerProps } from "./FormCreateCustomer.types";
 
 const formSchema = z.object({
-  serial: z.string().min(3, "El serial debe tener al menos 3 caracteres"),
-  nombreEquipo: z.string().min(3, "El nombre del equipo es obligatorio"),
-  marca: z.string().min(2, "La marca es obligatoria"),
+  serial: z.string().min(5, "El serial debe tener al menos 5 caracteres"),
+  nombreEquipo: z
+    .string()
+    .min(2, "el nombreEquipo debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "el nombreEquipo solo puede contener letras y espacios"
+    ),
+  marca: z
+    .string()
+    .min(2, "la marca debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "la marca solo puede contener letras y espacios"
+    ),
   modelo: z.string().min(2, "El modelo es obligatorio"),
-  ubicacion: z.string().min(3, "Debe indicar una ubicación"),
-  responsable: z.string().min(3, "El responsable es obligatorio"),
-  estado: z.string().min(3, "Debe indicar el estado del equipo"), // Ahora es un campo de texto libre
-  cargo: z.string().min(3, "El cargo es obligatorio"),
-  nombrePersona: z.string().min(3, "Debe ingresar el nombre de la persona"),
+  ubicacion: z
+    .string()
+    .min(2, "la ubicacion debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "la ubicacion solo puede contener letras y espacios"
+    ),
+  responsable: z
+    .string()
+    .min(2, "responsable debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "responsable solo puede contener letras y espacios"
+    ),
+  estado: z
+    .string()
+    .min(2, "estado debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "estado solo puede contener letras y espacios"
+    ),
+  cargo: z
+    .string()
+    .min(2, "el cargo debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "el cargo solo puede contener letras y espacios"
+    ),
+  nombrePersona: z
+    .string()
+    .min(2, "nombrePersona debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "nombrePersona solo puede contener letras y espacios"
+    ),
 });
 
 export function FormCreateCustomer(props: FormCreateCustomerProps) {

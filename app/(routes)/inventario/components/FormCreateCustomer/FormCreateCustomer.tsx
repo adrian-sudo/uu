@@ -19,15 +19,57 @@ import { Input } from "@/components/ui/input";
 
 // Esquema de validación con Zod
 const formSchema = z.object({
-  serial: z.string().min(1, "El serial es obligatorio"),
-  observacion: z.string().optional(),
-  nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  marca: z.string().min(1, "La marca es obligatoria"),
-  tipoEquipo: z.string().min(1, "El tipo de equipo es obligatorio"),
-  modelo: z.string().min(1, "El modelo es obligatorio"),
-  ubicacion: z.string().min(1, "La ubicación es obligatoria"),
-  estado: z.string().min(1, "El estado es obligatorio"),
-  negocio: z.string().min(1, "El negocio es obligatorio"),
+  serial: z.string().min(5, "El serial es obligatorio"),
+  observacion: z
+    .string()
+    .min(2, "observacion  debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "observacion solo puede contener letras y espacios"
+    ),
+  nombre: z
+    .string()
+    .min(2, "nombre debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "nombre solo puede contener letras y espacios"
+    ),
+  marca: z
+    .string()
+    .min(2, "marca debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "marca solo puede contener letras y espacios"
+    ),
+  tipoEquipo: z
+    .string()
+    .min(2, "tipoEquipo debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "tipoEquipo solo puede contener letras y espacios"
+    ),
+  modelo: z.string().min(2, "El modelo es obligatorio"),
+  ubicacion: z
+    .string()
+    .min(2, "ubicacion debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "ubicacion solo puede contener letras y espacios"
+    ),
+  estado: z
+    .string()
+    .min(2, "estado debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "estado solo puede contener letras y espacios"
+    ),
+  negocio: z
+    .string()
+    .min(2, "negocio debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "negocio solo puede contener letras y espacios"
+    ),
 });
 
 export function FormCreateCustomer({
@@ -158,7 +200,7 @@ export function FormCreateCustomer({
                 <FormItem>
                   <FormLabel>Ubicación</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ejemplo: Oficina 1" {...field} />
+                    <Input placeholder="Ejemplo: BodegaS3" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -191,7 +233,10 @@ export function FormCreateCustomer({
                 <FormItem>
                   <FormLabel>Negocio</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ejemplo: Ventas, Alquiler" {...field} />
+                    <Input
+                      placeholder="Ejemplo: CasaLuker,Colombia"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
