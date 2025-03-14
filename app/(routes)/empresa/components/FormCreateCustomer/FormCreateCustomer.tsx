@@ -20,9 +20,21 @@ import { Input } from "@/components/ui/input";
 
 // Esquema de validación
 const formSchema = z.object({
-  nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  pais: z.string().min(2, "El país debe tener al menos 2 caracteres"),
-  website: z.string().url("Ingrese una URL válida"),
+  nombre: z
+    .string()
+    .min(2, "nombre debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "nombre solo puede contener letras y espacios"
+    ),
+  pais: z
+    .string()
+    .min(2, "paies debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "pais  solo puede contener letras y espacios"
+    ),
+  website: z.string().url("Ingrese una URL válida"), // url de la empresa
   telefono: z
     .string()
     .min(10, "El teléfono debe tener al menos 10 caracteres")

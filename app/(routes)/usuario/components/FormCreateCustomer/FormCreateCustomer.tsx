@@ -33,9 +33,27 @@ const formSchema = z.object({
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
       "El apellido solo puede contener letras y espacios"
     ),
-  cargo: z.string().min(2, "El cargo es obligatorio"),
-  ciudad: z.string().min(2, "La ciudad es obligatoria"),
-  negocio: z.string().min(2, "El negocio es obligatorio"),
+  cargo: z
+    .string()
+    .min(2, "el cargo debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "el cargo solo puede contener letras y espacios"
+    ),
+  ciudad: z
+    .string()
+    .min(2, "la cuidad debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "la cuidad solo puede contener letras y espacios"
+    ),
+  negocio: z
+    .string()
+    .min(2, "el negocio debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "el negocio solo puede contener letras y espacios"
+    ),
   telefono: z
     .string()
     .min(10, "El teléfono debe tener al menos 10 dígitos")
