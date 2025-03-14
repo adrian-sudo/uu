@@ -26,7 +26,6 @@ export function HeaderUsers() {
             <DialogTitle>Crear usuarios</DialogTitle>
             <DialogDescription>Crear y configurar usuarios</DialogDescription>
           </DialogHeader>
-
           <FormCreateCustomer setOpenModalCreate={setOpenModalCreate} />
         </DialogContent>
       </Dialog>
