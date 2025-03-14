@@ -17,8 +17,20 @@ import { Input } from "@/components/ui/input";
 
 // Esquema de validación con Zod
 const formSchema = z.object({
-  nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  apellido: z.string().min(2, "El apellido debe tener al menos 2 caracteres"),
+  nombre: z
+    .string()
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "El nombre solo puede contener letras y espacios"
+    ),
+  apellido: z
+    .string()
+    .min(2, "El apellido debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "El apellido solo puede contener letras y espacios"
+    ),
   cargo: z.string().min(2, "El cargo es obligatorio"),
   ciudad: z.string().min(2, "La ciudad es obligatoria"),
   negocio: z.string().min(2, "El negocio es obligatorio"),
