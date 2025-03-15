@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner"; // Importa el toast de sonner
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { API_ROUTES } from "@/config/apiConfig";
 
 // Esquema de validación con Zod
 const formSchema = z.object({
@@ -35,24 +37,24 @@ const formSchema = z.object({
     ),
   cargo: z
     .string()
-    .min(2, "el cargo debe tener al menos 2 caracteres")
+    .min(2, "El cargo debe tener al menos 2 caracteres")
     .regex(
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "el cargo solo puede contener letras y espacios"
+      "El cargo solo puede contener letras y espacios"
     ),
   ciudad: z
     .string()
-    .min(2, "la cuidad debe tener al menos 2 caracteres")
+    .min(2, "La ciudad debe tener al menos 2 caracteres")
     .regex(
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "la cuidad solo puede contener letras y espacios"
+      "La ciudad solo puede contener letras y espacios"
     ),
   negocio: z
     .string()
-    .min(2, "el negocio debe tener al menos 2 caracteres")
+    .min(2, "El negocio debe tener al menos 2 caracteres")
     .regex(
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "el negocio solo puede contener letras y espacios"
+      "El negocio solo puede contener letras y espacios"
     ),
   telefono: z
     .string()
@@ -60,23 +62,35 @@ const formSchema = z.object({
     .regex(/^\d+$/, "El teléfono solo debe contener números"),
 });
 
+interface FormCreateCustomerProps {
+  setOpenModalCreate: (open: boolean) => void;
+  usuario?: {
+    id: number;
+    nombre: string;
+    apellido: string;
+    cargo: string;
+    ciudad: string;
+    negocio: string;
+    telefono: string;
+  };
+}
+
 export function FormCreateCustomer({
   setOpenModalCreate,
-}: {
-  setOpenModalCreate: (open: boolean) => void;
-}) {
+  usuario,
+}: FormCreateCustomerProps) {
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange", // Valida en cada cambio de entrada
     defaultValues: {
-      nombre: "",
-      apellido: "",
-      cargo: "",
-      ciudad: "",
-      negocio: "",
-      telefono: "",
+      nombre: usuario?.nombre || "",
+      apellido: usuario?.apellido || "",
+      cargo: usuario?.cargo || "",
+      ciudad: usuario?.ciudad || "",
+      negocio: usuario?.negocio || "",
+      telefono: usuario?.telefono || "",
     },
   });
 
@@ -84,28 +98,48 @@ export function FormCreateCustomer({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3001/api/usuarios",
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      let response;
+      if (usuario) {
+        // Editar usuario
+        response = await axios.put(
+          `${API_ROUTES.BASE_URL}${API_ROUTES.USUARIOS.DEFAULT}/${usuario.id}`,
+          values,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        // Crear nuevo usuario
+        response = await axios.post(
+          `${API_ROUTES.BASE_URL}${API_ROUTES.USUARIOS.DEFAULT}`,
+          values,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
 
-      if (response.status === 201) {
-        console.log("Usuario creado correctamente");
+      if (response.status === 201 || response.status === 200) {
+        toast.success(
+          response.data.message || "Usuario guardado correctamente"
+        );
         setOpenModalCreate(false); // Cierra el modal después de enviar
         form.reset(); // Resetea el formulario
       } else {
-        setError(response.data.message || "Error al crear el usuario");
+        setError(response.data.message || "Error al guardar el usuario");
+        toast.error(response.data.message || "Error al guardar el usuario");
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.message || "Error en la solicitud");
+        toast.error(error.response.data.message || "Error en la solicitud");
       } else {
         setError("Error en la solicitud");
+        toast.error("Error en la solicitud");
       }
     }
   };
@@ -201,7 +235,7 @@ export function FormCreateCustomer({
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <Button type="submit" disabled={!isValid}>
-            Enviar
+            {usuario ? "Actualizar" : "Crear"}
           </Button>
         </form>
       </Form>

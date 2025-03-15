@@ -8,11 +8,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CirclePlus } from "lucide-react";
 import { useState } from "react";
 import { FormCreateCustomer } from "../FormCreateCustomer";
+
 export function HeaderUsers() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
+
   return (
     <div className="flex justify-between items-center">
       <h2 className="text-2xl">Lista de Usuario</h2>
