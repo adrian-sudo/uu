@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const API_ROUTES = {
   BASE_URL: API_BASE_URL,
@@ -7,6 +6,9 @@ export const API_ROUTES = {
     DEFAULT: "/api/usuarios",
     COMBO: "/api/usuarios/combo",
     // Puedes agregar más rutas aquí si es necesario
+  },
+  EMPRESA: {
+    DEFAULT: "/api/empresa",
   },
   // Puedes agregar más rutas aquí si es necesario
 };
