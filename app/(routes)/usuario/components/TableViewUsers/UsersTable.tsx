@@ -216,11 +216,9 @@ export function UsersTable() {
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: {
-        pageIndex: page - 1,
-        pageSize,
-      },
     },
+    manualPagination: true,
+    pageCount: Math.ceil(total / pageSize),
   });
 
   if (loading) {
@@ -328,16 +326,23 @@ export function UsersTable() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page <= 1}
           >
             Anterior
           </Button>
+          <span>
+            Página {page} de {Math.ceil(total / pageSize)}
+          </span>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() =>
+              setPage((prev) =>
+                prev < Math.ceil(total / pageSize) ? prev + 1 : prev
+              )
+            }
+            disabled={page >= Math.ceil(total / pageSize)}
           >
             Siguiente
           </Button>
