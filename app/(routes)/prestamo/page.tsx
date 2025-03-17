@@ -4,6 +4,7 @@ export default function Prestamo() {
   return (
     <div>
       <HeaderPrestamo />
+      {/* <LoandTable /> */}
     </div>
   );
 }

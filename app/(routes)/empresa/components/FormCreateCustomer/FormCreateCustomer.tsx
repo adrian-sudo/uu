@@ -3,9 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FormCreateCustomerProps } from "./FormCreateCustomer.types";
-import { useEffect, useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,59 +16,33 @@ import { Input } from "@/components/ui/input";
 
 // Esquema de validación con Zod
 const formSchema = z.object({
-  serial: z.string().min(5, "El serial es obligatorio"),
-  observacion: z
-    .string()
-    .min(2, "observacion debe tener al menos 2 caracteres")
-    .regex(
-      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "observacion solo puede contener letras y espacios"
-    ),
   nombre: z
     .string()
-    .min(2, "nombre debe tener al menos 2 caracteres")
+    .min(2, "El nombre debe tener al menos 2 caracteres")
     .regex(
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "nombre solo puede contener letras y espacios"
+      "El nombre solo puede contener letras y espacios"
     ),
-  marca: z
+  pais: z
     .string()
-    .min(2, "marca debe tener al menos 2 caracteres")
+    .min(2, "El país debe tener al menos 2 caracteres")
     .regex(
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "marca solo puede contener letras y espacios"
+      "El país solo puede contener letras y espacios"
     ),
-  tipoEquipo: z
+  website: z.string().url("El website debe ser una URL válida"), // Validación de URL
+  telefono: z
     .string()
-    .min(2, "tipoEquipo debe tener al menos 2 caracteres")
+    .min(6, "El teléfono debe tener al menos 6 caracteres")
     .regex(
-      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "tipoEquipo solo puede contener letras y espacios"
+      /^[0-9+\-()\s]+$/,
+      "El teléfono solo puede contener números y caracteres especiales"
     ),
-  modelo: z.string().min(2, "El modelo es obligatorio"),
-  ubicacion: z
-    .string()
-    .min(2, "ubicacion debe tener al menos 2 caracteres")
-    .regex(
-      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "ubicacion solo puede contener letras y espacios"
-    ),
-  estado: z
-    .string()
-    .min(2, "estado debe tener al menos 2 caracteres")
-    .regex(
-      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "estado solo puede contener letras y espacios"
-    ),
-  negocio: z
-    .string()
-    .min(2, "negocio debe tener al menos 2 caracteres")
-    .regex(
-      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "negocio solo puede contener letras y espacios"
-    ),
-  cantidad: z.number().min(1, "La cantidad debe ser al menos 1"), // Nuevo campo
 });
+
+type FormCreateCustomerProps = {
+  setOpenModalCreate: (value: boolean) => void; // Tipo correcto para setOpenModalCreate
+};
 
 export function FormCreateCustomer({
   setOpenModalCreate,
@@ -79,16 +50,10 @@ export function FormCreateCustomer({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      serial: "",
-      observacion: "",
       nombre: "",
-      marca: "",
-      tipoEquipo: "",
-      modelo: "",
-      ubicacion: "",
-      estado: "",
-      negocio: "",
-      cantidad: 1, // Valor por defecto para cantidad
+      pais: "",
+      website: "",
+      telefono: "",
     },
   });
 
@@ -104,36 +69,47 @@ export function FormCreateCustomer({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            {/* Campo Serial */}
+            {/* Campo Nombre */}
             <FormField
               control={form.control}
-              name="serial"
+              name="nombre"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Serial</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ejemplo: ABC123" {...field} />
+                    <Input placeholder="Ejemplo: CasaLuker" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Campo Cantidad */}
+            {/* Campo País */}
             <FormField
               control={form.control}
-              name="cantidad"
+              name="pais"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cantidad</FormLabel>
+                  <FormLabel>País</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ejemplo: Colombia" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Campo Website */}
+            <FormField
+              control={form.control}
+              name="website"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Website</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      placeholder="Ejemplo: 5"
+                      placeholder="Ejemplo: https://empresa.com"
                       {...field}
-                      onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10))
-                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -141,7 +117,20 @@ export function FormCreateCustomer({
               )}
             />
 
-            {/* Resto de los campos... */}
+            {/* Campo Teléfono */}
+            <FormField
+              control={form.control}
+              name="telefono"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Teléfono</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ejemplo: +52 55 1234 5678" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <Button type="submit" disabled={!isValid}>
             Enviar
