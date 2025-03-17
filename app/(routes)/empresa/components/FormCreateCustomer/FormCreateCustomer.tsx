@@ -4,13 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FormCreateCustomerProps } from "./FormCreateCustomer.types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,8 +17,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-// Esquema de validación
+// Esquema de validación con Zod
 const formSchema = z.object({
+  serial: z.string().min(5, "El serial es obligatorio"),
+  observacion: z
+    .string()
+    .min(2, "observacion debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "observacion solo puede contener letras y espacios"
+    ),
   nombre: z
     .string()
     .min(2, "nombre debe tener al menos 2 caracteres")
@@ -27,18 +34,43 @@ const formSchema = z.object({
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
       "nombre solo puede contener letras y espacios"
     ),
-  pais: z
+  marca: z
     .string()
-    .min(2, "paies debe tener al menos 2 caracteres")
+    .min(2, "marca debe tener al menos 2 caracteres")
     .regex(
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-      "pais  solo puede contener letras y espacios"
+      "marca solo puede contener letras y espacios"
     ),
-  website: z.string().url("Ingrese una URL válida"), // url de la empresa
-  telefono: z
+  tipoEquipo: z
     .string()
-    .min(10, "El teléfono debe tener al menos 10 caracteres")
-    .regex(/^\d+$/, "El teléfono solo debe contener números"),
+    .min(2, "tipoEquipo debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "tipoEquipo solo puede contener letras y espacios"
+    ),
+  modelo: z.string().min(2, "El modelo es obligatorio"),
+  ubicacion: z
+    .string()
+    .min(2, "ubicacion debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "ubicacion solo puede contener letras y espacios"
+    ),
+  estado: z
+    .string()
+    .min(2, "estado debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "estado solo puede contener letras y espacios"
+    ),
+  negocio: z
+    .string()
+    .min(2, "negocio debe tener al menos 2 caracteres")
+    .regex(
+      /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+      "negocio solo puede contener letras y espacios"
+    ),
+  cantidad: z.number().min(1, "La cantidad debe ser al menos 1"), // Nuevo campo
 });
 
 export function FormCreateCustomer({
@@ -47,18 +79,23 @@ export function FormCreateCustomer({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      serial: "",
+      observacion: "",
       nombre: "",
-      pais: "",
-      website: "",
-      telefono: "",
+      marca: "",
+      tipoEquipo: "",
+      modelo: "",
+      ubicacion: "",
+      estado: "",
+      negocio: "",
+      cantidad: 1, // Valor por defecto para cantidad
     },
   });
 
   const { isValid } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Nuevo Cliente:", values);
-
+    console.log(values);
     setOpenModalCreate(false); // Cierra el modal después del envío
   };
 
@@ -67,68 +104,44 @@ export function FormCreateCustomer({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            {/* Campo Nombre */}
+            {/* Campo Serial */}
             <FormField
               control={form.control}
-              name="nombre"
+              name="serial"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre</FormLabel>
+                  <FormLabel>Serial</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ejemplo: Casa Luker" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Este será el nombre público.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo País */}
-            <FormField
-              control={form.control}
-              name="pais"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>País</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ejemplo: Colombia" {...field} />
+                    <Input placeholder="Ejemplo: ABC123" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Campo Website */}
+            {/* Campo Cantidad */}
             <FormField
               control={form.control}
-              name="website"
+              name="cantidad"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Website</FormLabel>
+                  <FormLabel>Cantidad</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://ejemplo.com" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Ejemplo: 5"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseInt(e.target.value, 10))
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Campo Teléfono */}
-            <FormField
-              control={form.control}
-              name="telefono"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Teléfono</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ejemplo: 3142501555" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Resto de los campos... */}
           </div>
           <Button type="submit" disabled={!isValid}>
             Enviar

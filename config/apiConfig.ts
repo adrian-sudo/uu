@@ -8,7 +8,7 @@ export const API_ROUTES = {
     // Puedes agregar más rutas aquí si es necesario
   },
   EMPRESA: {
-    DEFAULT: "/api/empresa",
+    DEFAULT: "/api/empresas",
   },
   // Puedes agregar más rutas aquí si es necesario
 };

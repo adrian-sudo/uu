@@ -1,10 +1,11 @@
 import { HeaderCompanies } from "./components/HeaderCompanies";
+import { EmpresasTable } from "./components/TableViewCompany/CompanyTable";
 
 export default function Compañia() {
   return (
     <div>
       <HeaderCompanies />
-      {/* <CompanyTable />   para la de empresa , solo es un comentario */}
+      <EmpresasTable />
     </div>
   );
 }
