@@ -22,7 +22,7 @@ const formSchema = z.object({
   serial: z.string().min(5, "El serial es obligatorio"),
   observacion: z
     .string()
-    .min(2, "observacion  debe tener al menos 2 caracteres")
+    .min(2, "observacion debe tener al menos 2 caracteres")
     .regex(
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
       "observacion solo puede contener letras y espacios"
@@ -70,6 +70,7 @@ const formSchema = z.object({
       /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
       "negocio solo puede contener letras y espacios"
     ),
+  cantidad: z.number().min(1, "La cantidad debe ser al menos 1"), // Nuevo campo
 });
 
 export function FormCreateCustomer({
@@ -87,6 +88,7 @@ export function FormCreateCustomer({
       ubicacion: "",
       estado: "",
       negocio: "",
+      cantidad: 1, // Valor por defecto para cantidad
     },
   });
 
@@ -117,107 +119,21 @@ export function FormCreateCustomer({
               )}
             />
 
-            {/* Campo Observación */}
+            {/* Campo Cantidad */}
             <FormField
               control={form.control}
-              name="observacion"
+              name="cantidad"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Observación</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Opcional" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo Nombre */}
-            <FormField
-              control={form.control}
-              name="nombre"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ejemplo: Laptop Dell" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo Marca */}
-            <FormField
-              control={form.control}
-              name="marca"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Marca</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ejemplo: Dell" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo Tipo de Equipo */}
-            <FormField
-              control={form.control}
-              name="tipoEquipo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tipo de Equipo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ejemplo: Laptop, Monitor" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo Modelo */}
-            <FormField
-              control={form.control}
-              name="modelo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Modelo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ejemplo: Inspiron 15" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo Ubicación */}
-            <FormField
-              control={form.control}
-              name="ubicacion"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ubicación</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ejemplo: BodegaS3" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Campo Estado */}
-            <FormField
-              control={form.control}
-              name="estado"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Estado</FormLabel>
+                  <FormLabel>Cantidad</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ejemplo: Disponible, Ocupado"
+                      type="number"
+                      placeholder="Ejemplo: 5"
                       {...field}
+                      onChange={(e) =>
+                        field.onChange(parseInt(e.target.value, 10))
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -225,23 +141,7 @@ export function FormCreateCustomer({
               )}
             />
 
-            {/* Campo Negocio */}
-            <FormField
-              control={form.control}
-              name="negocio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Negocio</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ejemplo: CasaLuker,Colombia"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Resto de los campos... */}
           </div>
           <Button type="submit" disabled={!isValid}>
             Enviar

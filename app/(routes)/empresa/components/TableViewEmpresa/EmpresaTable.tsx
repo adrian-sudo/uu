@@ -349,7 +349,7 @@ export function UsersTable() {
             <DialogTitle>Editar usuario</DialogTitle>
             <DialogDescription>Editar y configurar usuario</DialogDescription>
           </DialogHeader>
-          <FormCreateCustomer
+          <FormCreateCustomer // error
             setOpenModalCreate={setOpenModalEdit}
             usuario={selectedUsuario ?? undefined}
           />
