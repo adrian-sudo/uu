@@ -339,10 +339,17 @@ export function EmpresasTable() {
             <DialogTitle>Editar empresa</DialogTitle>
             <DialogDescription>Editar y configurar empresa</DialogDescription>
           </DialogHeader>
+<<<<<<< HEAD:app/(routes)/empresa/components/TableViewCompany/CompanyTable.tsx
           <FormCreateEmpresa
             setOpenModalCreate={setOpenModalEdit}
             empresa={selectedEmpresa ?? undefined}
           />
+=======
+          {/* <FormCreateCustomer
+            setOpenModalCreate={setOpenModalEdit}
+            usuario={selectedUsuario ?? undefined}
+          /> */}
+>>>>>>> 785ba8b4a9715c4f2dbbd659de2d121da96c10b6:app/(routes)/empresa/components/TableViewEmpresa/EmpresaTable.tsx
         </DialogContent>
       </Dialog>
     </div>
