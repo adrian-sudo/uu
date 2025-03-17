@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { API_ROUTES } from "@/config/apiConfig";
-import { FormCreateCustomer } from "../FormCreateCustomer/FormCreateCustomer";
+import { FormCreateEmpresa } from "../FormCreateEmpresa";
 import {
   Dialog,
   DialogContent,
@@ -46,18 +46,16 @@ import { toast } from "sonner"; // Importa el toast de sonner
 
 import { MoreHorizontal } from "lucide-react";
 
-interface Usuario {
+interface Empresa {
   id: number;
   nombre: string;
-  apellido: string;
-  cargo: string;
-  ciudad: string;
-  negocio: string;
+  pais: string;
+  website: string;
   telefono: string;
 }
 
-export function UsersTable() {
-  const [usuarios, setUsuarios] = React.useState<Usuario[]>([]);
+export function EmpresasTable() {
+  const [empresas, setEmpresas] = React.useState<Empresa[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -71,21 +69,21 @@ export function UsersTable() {
   const [pageSize, setPageSize] = React.useState(10);
   const [total, setTotal] = React.useState(0);
   const [openModalEdit, setOpenModalEdit] = React.useState(false);
-  const [selectedUsuario, setSelectedUsuario] = React.useState<Usuario | null>(
+  const [selectedEmpresa, setSelectedEmpresa] = React.useState<Empresa | null>(
     null
   );
 
   React.useEffect(() => {
-    const fetchUsuarios = async () => {
+    const fetchEmpresas = async () => {
       try {
         const response = await fetch(
-          `${API_ROUTES.BASE_URL}${API_ROUTES.USUARIOS.DEFAULT}?page=${page}&pageSize=${pageSize}`
+          `${API_ROUTES.BASE_URL}${API_ROUTES.EMPRESA.DEFAULT}?page=${page}&pageSize=${pageSize}`
         );
         if (!response.ok) {
-          throw new Error("Error al obtener los usuarios");
+          throw new Error("Error al obtener las empresas");
         }
         const data = await response.json();
-        setUsuarios(data.usuarios);
+        setEmpresas(data.empresas);
         setTotal(data.total);
       } catch (error) {
         setError((error as Error).message);
@@ -94,35 +92,35 @@ export function UsersTable() {
       }
     };
 
-    fetchUsuarios();
+    fetchEmpresas();
   }, [page, pageSize]);
 
-  const handleEdit = (usuario: Usuario) => {
-    setSelectedUsuario(usuario);
+  const handleEdit = (empresa: Empresa) => {
+    setSelectedEmpresa(empresa);
     setOpenModalEdit(true);
   };
 
-  const handleDelete = async (usuario: Usuario) => {
+  const handleDelete = async (empresa: Empresa) => {
     try {
       const response = await fetch(
-        `${API_ROUTES.BASE_URL}${API_ROUTES.USUARIOS.DEFAULT}/${usuario.id}`,
+        `${API_ROUTES.BASE_URL}${API_ROUTES.EMPRESA.DEFAULT}/${empresa.id}`,
         {
           method: "DELETE",
         }
       );
       if (!response.ok) {
-        throw new Error("Error al eliminar el usuario");
+        throw new Error("Error al eliminar la empresa");
       }
-      setUsuarios((prevUsuarios) =>
-        prevUsuarios.filter((u) => u.id !== usuario.id)
+      setEmpresas((prevEmpresas) =>
+        prevEmpresas.filter((e) => e.id !== empresa.id)
       );
-      toast.success("Usuario eliminado correctamente");
+      toast.success("Empresa eliminada correctamente");
     } catch (error) {
-      toast.error((error as Error).message || "Error al eliminar el usuario");
+      toast.error((error as Error).message || "Error al eliminar la empresa");
     }
   };
 
-  const columns: ColumnDef<Usuario>[] = [
+  const columns: ColumnDef<Empresa>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -151,20 +149,12 @@ export function UsersTable() {
       header: "Nombre",
     },
     {
-      accessorKey: "apellido",
-      header: "Apellido",
+      accessorKey: "pais",
+      header: "País",
     },
     {
-      accessorKey: "cargo",
-      header: "Cargo",
-    },
-    {
-      accessorKey: "ciudad",
-      header: "Ciudad",
-    },
-    {
-      accessorKey: "negocio",
-      header: "Negocio",
+      accessorKey: "website",
+      header: "Website",
     },
     {
       accessorKey: "telefono",
@@ -174,7 +164,7 @@ export function UsersTable() {
       id: "actions",
       header: "Acciones",
       cell: ({ row }) => {
-        const usuario = row.original;
+        const empresa = row.original;
 
         return (
           <DropdownMenu>
@@ -186,11 +176,11 @@ export function UsersTable() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleEdit(usuario)}>
+              <DropdownMenuItem onClick={() => handleEdit(empresa)}>
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleDelete(usuario)}>
+              <DropdownMenuItem onClick={() => handleDelete(empresa)}>
                 Eliminar
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -201,7 +191,7 @@ export function UsersTable() {
   ];
 
   const table = useReactTable({
-    data: usuarios,
+    data: empresas,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -346,12 +336,12 @@ export function UsersTable() {
       <Dialog open={openModalEdit} onOpenChange={setOpenModalEdit}>
         <DialogContent className="sm:max-w-[625px]">
           <DialogHeader>
-            <DialogTitle>Editar usuario</DialogTitle>
-            <DialogDescription>Editar y configurar usuario</DialogDescription>
+            <DialogTitle>Editar empresa</DialogTitle>
+            <DialogDescription>Editar y configurar empresa</DialogDescription>
           </DialogHeader>
-          <FormCreateCustomer // error
+          <FormCreateEmpresa
             setOpenModalCreate={setOpenModalEdit}
-            usuario={selectedUsuario ?? undefined}
+            empresa={selectedEmpresa ?? undefined}
           />
         </DialogContent>
       </Dialog>

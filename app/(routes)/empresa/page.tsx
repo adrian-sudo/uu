@@ -4,7 +4,7 @@ export default function Compañia() {
   return (
     <div>
       <HeaderCompanies />
-      {/* <p>List companies</p> */}
+      {/* <CompanyTable />   para la de empresa , solo es un comentario */}
     </div>
   );
 }
