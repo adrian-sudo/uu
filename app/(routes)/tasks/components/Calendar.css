@@ -1,0 +1,15 @@
+.rbc-calendar {
+  height: 100%;
+  min-height: 500px;
+}
+
+.rbc-toolbar {
+  margin-bottom: 10px;
+}
+
+.rbc-event {
+  background-color: #3174ad;
+  border-radius: 5px;
+  padding: 2px 5px;
+  color: white;
+}
