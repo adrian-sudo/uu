@@ -8,6 +8,7 @@ const TasksPage: React.FC = () => {
   return (
     <div>
       <h1>Calendario</h1>
+      <br />
       <div style={{ display: "flex" }}>
         <div style={{ flex: 3 }}>
           <MyCalendar />

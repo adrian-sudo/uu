@@ -25,14 +25,14 @@ const MyCalendar: React.FC = () => {
   }, []);
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
-    const title = window.prompt("New Event name");
+    const title = window.prompt("Agregar Nuevo Eento al calendario");
     if (title) {
       setEvents([...events, { id: events.length + 1, title, start, end }]);
     }
   };
 
   const handleSelectEvent = (event: Event) => {
-    if (window.confirm(`Are you sure you want to delete "${event.title}"?`)) {
+    if (window.confirm(`Deseas eliminar el evento creado "${event.title}"?`)) {
       setEvents(events.filter((e) => e.id !== event.id));
     }
   };
