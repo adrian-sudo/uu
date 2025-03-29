@@ -46,9 +46,8 @@ import { toast } from "sonner"; // Importa el toast de sonner
 import { MoreHorizontal } from "lucide-react";
 
 interface Inventario {
-  id: number; // Este campo sigue en la interfaz porque es necesario para las operaciones de edición y eliminación
+  id_producto: number; // Cambiar 'id' a 'id_producto' si es necesario
   serial: string;
-  observacion: string;
   nombre: string;
   marca: string;
   tipoEquipo: string;
@@ -57,6 +56,7 @@ interface Inventario {
   estado: string;
   negocio: string;
   cantidad: number;
+  descripcion?: string; // Campo opcional si no siempre está presente
 }
 
 export function InventarioTable() {
@@ -88,7 +88,7 @@ export function InventarioTable() {
           throw new Error("Error al obtener el inventario");
         }
         const data = await response.json();
-        setInventario(data.inventario);
+        setInventario(data.productos);
         setTotal(data.total);
       } catch (error) {
         setError((error as Error).message);
@@ -108,7 +108,7 @@ export function InventarioTable() {
   const handleDelete = async (item: Inventario) => {
     try {
       const response = await fetch(
-        `${API_ROUTES.BASE_URL}${API_ROUTES.INVENTARIO.DEFAULT}/${item.id}`,
+        `${API_ROUTES.BASE_URL}${API_ROUTES.INVENTARIO.DEFAULT}/${item.id_producto}`,
         {
           method: "DELETE",
         }
@@ -117,7 +117,7 @@ export function InventarioTable() {
         throw new Error("Error al eliminar el item del inventario");
       }
       setInventario((prevInventario) =>
-        prevInventario.filter((i) => i.id !== item.id)
+        prevInventario.filter((i) => i.id_producto !== item.id_producto)
       );
       toast.success("Item eliminado correctamente");
     } catch (error) {
@@ -303,10 +303,7 @@ export function InventarioTable() {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -362,7 +359,7 @@ export function InventarioTable() {
           </DialogHeader>
           <FormCreateCustomer
             setOpenModalCreate={setOpenModalEdit}
-            item={selectedItem ?? undefined}
+            // item={selectedItem ?? undefined}
           />
         </DialogContent>
       </Dialog>
