@@ -10,5 +10,9 @@ export const API_ROUTES = {
   EMPRESA: {
     DEFAULT: "/api/empresas",
   },
+  INVENTARIO: {
+    DEFAULT: "/api/inventario"
+  }
   // Puedes agregar más rutas aquí si es necesario
 };
+
