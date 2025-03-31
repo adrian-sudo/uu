@@ -133,9 +133,7 @@ export function FormCreateCustomer({
             {renderField("negocio", "Negocio", "Ejemplo: CasaLuker,Colombia")}
             {renderField("cantidad", "Cantidad", "Ejemplo: 5", "number")}
           </div>
-          <Button type="submit" disabled={!isValid}>
-            Enviar
-          </Button>
+          <Button type="submit">Enviar</Button>
         </form>
       </Form>
     </div>

@@ -132,9 +132,7 @@ export function FormCreateCustomer({
               )}
             />
           </div>
-          <Button type="submit" disabled={!isValid}>
-            Enviar
-          </Button>
+          <Button type="submit">Enviar</Button>
         </form>
       </Form>
     </div>
