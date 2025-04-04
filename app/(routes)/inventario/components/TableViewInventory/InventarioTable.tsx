@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { API_ROUTES } from "@/config/apiConfig";
-import { FormCreateCustomer } from "../FormCreateCustomer/FormCreateCustomer";
+import { FormCreateInventory } from "../FormCreateInventory/FormCreateInventory";
 import {
   Dialog,
   DialogContent,
@@ -204,6 +204,9 @@ export function InventarioTable() {
               <DropdownMenuItem onClick={() => handleDelete(item)}>
                 Eliminar
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDelete(item)}>
+                Hacer Prestamo
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -357,7 +360,7 @@ export function InventarioTable() {
             <DialogTitle>Editar item</DialogTitle>
             <DialogDescription>Editar y configurar item</DialogDescription>
           </DialogHeader>
-          <FormCreateCustomer
+          <FormCreateInventory
             setOpenModalCreate={setOpenModalEdit}
             // item={selectedItem ?? undefined}
           />

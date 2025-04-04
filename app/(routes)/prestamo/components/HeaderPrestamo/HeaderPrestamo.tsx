@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { FormCreateCustomer } from "../FormCreateCustomer";
+import { FormCreatePrestamo } from "../FormCreatePrestamo";
 import { useState } from "react";
 
 import {
@@ -29,7 +29,7 @@ export function HeaderPrestamo() {
             <DialogDescription>Crear y Configurar prestamos</DialogDescription>
           </DialogHeader>
 
-          <FormCreateCustomer />
+          <FormCreatePrestamo setOpenModalCreate={setOpenModalCreate} />
         </DialogContent>
       </Dialog>
     </div>

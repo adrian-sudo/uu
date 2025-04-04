@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { CirclePlus } from "lucide-react";
-import { useState } from "react";
-import { FormCreateCustomer } from "../FormCreateCustomer";
+import { SetStateAction, useState } from "react";
+import { FormCreateInventory } from "../FormCreateInventory";
 export function HeaderInventory() {
   const [openModalCreate, setOpenModalCreate] = useState(false);
 
@@ -28,8 +28,7 @@ export function HeaderInventory() {
             <DialogTitle>Crear Inventario</DialogTitle>
             <DialogDescription>Crear y configurar Inventario</DialogDescription>
           </DialogHeader>
-
-          <FormCreateCustomer />
+          <FormCreateInventory setOpenModalCreate={setOpenModalCreate} />
         </DialogContent>
       </Dialog>
     </div>

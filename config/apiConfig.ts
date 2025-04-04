@@ -11,8 +11,12 @@ export const API_ROUTES = {
     DEFAULT: "/api/empresas",
   },
   INVENTARIO: {
-    DEFAULT: "/api/inventario"
-  }
+    DEFAULT: "/api/inventario",
+  },
+  PRESTAMOS: {
+    DEFAULT: "/api/prestamo",
+    COMBO: "/api/prestamo/combo",
+    // Puedes agregar más rutas aquí si es necesario
+  },
   // Puedes agregar más rutas aquí si es necesario
 };
-

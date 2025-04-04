@@ -2,28 +2,21 @@
 import * as React from "react";
 import {
   ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -33,62 +26,54 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { API_ROUTES } from "@/config/apiConfig";
-import { FormCreateCustomer } from "../FormCreateCustomer/FormCreateCustomer";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
-import { toast } from "sonner"; // Importa el toast de sonner
-import { MoreHorizontal } from "lucide-react";
+import { FormCreatePrestamo } from "../FormCreatePrestamo/FormCreatePrestamo";
+import { API_ROUTES } from "@/config/apiConfig";
+import { toast } from "sonner";
 
-interface Inventario {
-  id: number; // Este campo sigue en la interfaz porque es necesario para las operaciones de edición y eliminación
-  serial: string;
-  nombreEquipo: string;
-  marca: string;
-  modelo: string;
-  ubicacion: string;
-  responsable: string;
+interface Prestamo {
+  id_prestamo: number;
+  id_producto: number;
+  usuario_prestamo: string;
+  usuario_cargo: string;
+  fecha_prestamo: string;
+  fecha_devolucion: string;
+  cantidad_prestada: number;
   estado: string;
-  cargo: string;
-  nombrePersona: string;
+  nombre_producto: string;
+  serial_producto: string;
 }
 
-export function InventarioTable() {
-  const [inventario, setInventario] = React.useState<Inventario[]>([]);
+export function LoansTable() {
+  const [prestamos, setPrestamos] = React.useState<Prestamo[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
-  const [total, setTotal] = React.useState(0);
+  const [selectedPrestamo, setSelectedPrestamo] =
+    React.useState<Prestamo | null>(null);
   const [openModalEdit, setOpenModalEdit] = React.useState(false);
-  const [selectedItem, setSelectedItem] = React.useState<Inventario | null>(
-    null
-  );
+
+  function formatDate(isoDate: string): string {
+    const date = new Date(isoDate);
+    return date.toISOString().split("T")[0]; // Devuelve solo la parte de la fecha (YYYY-MM-DD)
+  }
 
   React.useEffect(() => {
-    const fetchInventario = async () => {
+    const fetchPrestamos = async () => {
       try {
         const response = await fetch(
-          `${API_ROUTES.BASE_URL}${API_ROUTES.INVENTARIO.DEFAULT}?page=${page}&pageSize=${pageSize}`
+          `${API_ROUTES.BASE_URL}${API_ROUTES.PRESTAMOS.DEFAULT}`
         );
         if (!response.ok) {
-          throw new Error("Error al obtener el inventario");
+          throw new Error("Error al obtener los préstamos");
         }
         const data = await response.json();
-        setInventario(data.inventario);
-        setTotal(data.total);
+        setPrestamos(data.prestamos);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -96,96 +81,94 @@ export function InventarioTable() {
       }
     };
 
-    fetchInventario();
-  }, [page, pageSize]);
+    fetchPrestamos();
+  }, []);
 
-  const handleEdit = (item: Inventario) => {
-    setSelectedItem(item);
+  const handleEdit = (prestamo: Prestamo) => {
+    setSelectedPrestamo(prestamo);
     setOpenModalEdit(true);
   };
 
-  const handleDelete = async (item: Inventario) => {
+  const handleMarkAsReturned = async (prestamo: Prestamo) => {
     try {
       const response = await fetch(
-        `${API_ROUTES.BASE_URL}${API_ROUTES.INVENTARIO.DEFAULT}/${item.id}`,
+        `http://localhost:1024/api/prestamo/${prestamo.id_prestamo}/estado`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ estado: "Devuelto" }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al marcar el préstamo como devuelto");
+      }
+
+      // Actualizar el estado local de los préstamos
+      setPrestamos((prevPrestamos) =>
+        prevPrestamos.map((p) =>
+          p.id_prestamo === prestamo.id_prestamo
+            ? { ...p, estado: "Devuelto" }
+            : p
+        )
+      );
+
+      toast.success("Préstamo marcado como devuelto correctamente");
+    } catch (error) {
+      toast.error((error as Error).message || "Error al marcar como devuelto");
+    }
+  };
+
+  const handleDelete = async (prestamo: Prestamo) => {
+    try {
+      const response = await fetch(
+        `${API_ROUTES.BASE_URL}${API_ROUTES.PRESTAMOS.DEFAULT}/${prestamo.id_prestamo}`,
         {
           method: "DELETE",
         }
       );
       if (!response.ok) {
-        throw new Error("Error al eliminar el item del inventario");
+        throw new Error("Error al eliminar el préstamo");
       }
-      setInventario((prevInventario) =>
-        prevInventario.filter((i) => i.id !== item.id)
+      setPrestamos((prevPrestamos) =>
+        prevPrestamos.filter((p) => p.id_prestamo !== prestamo.id_prestamo)
       );
-      toast.success("Item eliminado correctamente");
+      toast.success("Préstamo eliminado correctamente");
     } catch (error) {
-      toast.error((error as Error).message || "Error al eliminar el item");
+      toast.error((error as Error).message || "Error al eliminar el préstamo");
     }
   };
 
-  const columns: ColumnDef<Inventario>[] = [
+  const columns: ColumnDef<Prestamo>[] = [
+    { accessorKey: "usuario_prestamo", header: "Usuario" },
+    { accessorKey: "usuario_cargo", header: "Cargo" },
     {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
+      accessorKey: "fecha_prestamo",
+      header: "Fecha Préstamo",
+      cell: ({ row }) => {
+        const fechaPrestamo = row.original.fecha_prestamo;
+        return formatDate(fechaPrestamo);
+      },
     },
     {
-      accessorKey: "serial",
-      header: "Serial",
+      accessorKey: "fecha_devolucion",
+      header: "Fecha Devolución",
+      cell: ({ row }) => {
+        const fechaDevolucion = row.original.fecha_devolucion;
+        return fechaDevolucion ? formatDate(fechaDevolucion) : "Sin definir";
+      },
     },
-    {
-      accessorKey: "nombreEquipo",
-      header: "Nombre del Equipo",
-    },
-    {
-      accessorKey: "marca",
-      header: "Marca",
-    },
-    {
-      accessorKey: "modelo",
-      header: "Modelo",
-    },
-    {
-      accessorKey: "ubicacion",
-      header: "Ubicación",
-    },
-    {
-      accessorKey: "responsable",
-      header: "Responsable",
-    },
-    {
-      accessorKey: "estado",
-      header: "Estado",
-    },
-    {
-      accessorKey: "cargo",
-      header: "Cargo",
-    },
-    {
-      accessorKey: "nombrePersona",
-      header: "Nombre de la Persona",
-    },
+    { accessorKey: "cantidad_prestada", header: "Cantidad" },
+    { accessorKey: "estado", header: "Estado" },
+    { accessorKey: "nombre_producto", header: "Producto" },
+    { accessorKey: "serial_producto", header: "Serial" },
     {
       id: "actions",
       header: "Acciones",
       cell: ({ row }) => {
-        const item = row.original;
-
+        const prestamo = row.original;
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -196,12 +179,15 @@ export function InventarioTable() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleEdit(item)}>
+              <DropdownMenuItem onClick={() => handleEdit(prestamo)}>
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleDelete(item)}>
+              <DropdownMenuItem onClick={() => handleDelete(prestamo)}>
                 Eliminar
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleMarkAsReturned(prestamo)}>
+                Marcar como devuelto
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -211,26 +197,9 @@ export function InventarioTable() {
   ];
 
   const table = useReactTable({
-    data: inventario,
+    data: prestamos,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination: {
-        pageIndex: page - 1,
-        pageSize,
-      },
-    },
   });
 
   if (loading) {
@@ -244,70 +213,28 @@ export function InventarioTable() {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filtrar por nombre del equipo..."
-          value={
-            (table.getColumn("nombreEquipo")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("nombreEquipo")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columnas
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Input placeholder="Filtrar por usuario..." className="max-w-sm" />
       </div>
       <div className="border rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -324,53 +251,27 @@ export function InventarioTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No hay resultados.
+                  No hay préstamos disponibles.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
-        </div>
-      </div>
+
+      {/* Modal para editar préstamo */}
       <Dialog open={openModalEdit} onOpenChange={setOpenModalEdit}>
         <DialogContent className="sm:max-w-[625px]">
           <DialogHeader>
-            <DialogTitle>Editar item</DialogTitle>
-            <DialogDescription>Editar y configurar item</DialogDescription>
+            <DialogTitle>Editar préstamo</DialogTitle>
+            <DialogDescription>Editar y configurar préstamo</DialogDescription>
           </DialogHeader>
-          <FormCreateCustomer
+          <FormCreatePrestamo
             setOpenModalCreate={setOpenModalEdit}
-            item={selectedItem ?? undefined}
+            prestamo={selectedPrestamo ?? undefined}
           />
         </DialogContent>
       </Dialog>
     </div>
   );
 }
-
-/**
- * La mima vaina de inventario verifica cualquier vaina
- */
